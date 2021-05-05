@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+
+    <div class="container-fluid">
+		<div style="margin: 50px; text-align: center;">
+			<h1>AKA Health Main Menu</h1>
+		</div>
+
+		<!-- <div style="margin: 40px; text-align: center;">
+			<a href="/TablesToEdit">
+              <button type="button" class="btn btn-primary btn-lg">Edit Patient History</button>
+         	</a>
+		</div> -->
+		<div style="margin: 40px; text-align:center;">
+			<a href="/PatientFilteration">
+				<button type="button" class="btn btn-success btn-lg">View Patient History</button>
+         	</a>
+		</div>
+		<div style="margin: 40px; text-align:center;">
+			<a href="/AddNewPatient">
+				<button type="button" class="btn btn-danger btn-lg">Add New Patient</button>
+         	</a>
+		</div>
+		<div style="margin: 40px; text-align:center;">
+			<a href="/employee/<%= employee_id %>">
+				<button type="button" class="btn btn-primary btn-lg">View Employee Profile</button>
+         	</a>
+		</div>
+
+		<div style="margin: 150px; text-align:center;">
+			<form action="/logout" method="POST">
+				<button class="btn btn-dark btn-lg">Sign Out</button>
+			</form>
+		</div>
+
+
+
+
+    </div>
+<%- include('partials/footer') %>
+

@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+    <div class="container">
+        <h1 class="display-4">Add New Patient</h1>
+        <p class="lead">Please enter the patient information.</p>
+    
+        <form action="/AddNewPatient" method="POST">
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_name">Patient Name</label>
+              <input type="text" class="form-control" name="patient_name" id="patient_name" placeholder="patient name" >
+            </div>
+            <!-- gender -->
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_gender">Gender</label>
+              <input type="text" class="form-control" name="patient_gender" id="patient_gender" placeholder="male/female" >
+            </div>
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_age">Age</label>
+              <input type="text" class="form-control" name="patient_age" id="patient_age" placeholder="age" >
+            </div>
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_DOB">Date of Birth</label>
+              <input type="text" class="form-control" name="patient_DOB" id="patient_DOB" placeholder="patient date of birth" >
+              <div id="patient_DOB" class="form-text">Please enter the date of birth in the following format: YYYY-MM-DD </div>
+            </div>
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_phone_num">Phone Number</label>
+              <input type="text" class="form-control" name="patient_phone_num" id="patient_phone_num" placeholder="phone number" >
+            </div>
+
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_address">Address</label>
+              <input type="text" class="form-control" name="patient_address" id="patient_address" placeholder="address" >
+            </div>
+
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_insurance">Insurance ID</label>
+              <input type="number" class="form-control" name="patient_insurance" id="patient_insurance" placeholder="insurance" >
+            </div>
+
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_curr_medication">Current Medication</label>
+              <input type="text" class="form-control" name="patient_curr_medication" id="patient_curr_medication" placeholder="current medication" >
+            </div>
+
+            <div class="form-group" name="margin: 20px; margin-left: 0px">
+              <label for="patient_health_condition">Health Condition</label>
+              <input type="text" class="form-control" name="patient_health_condition" id="patient_health_condition" placeholder="health condition" >
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+    </div>
+
+    
+    <%- include('partials/footer') %>

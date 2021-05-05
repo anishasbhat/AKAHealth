@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+
+<div class="container-fluid">
+    <div style="margin: 50px; text-align: center;">
+        <h1>AKA Health Employee Statistics Page</h1>
+    </div>
+
+    <form action="/StatEmployee_NumEmployees" method="POST">
+        <label>Number of Employees per profession. - Enter profession:</label>
+        <input type="text" size="20" name="dept_name" id="dept_name" placeholder="ex: doctor" >
+        <button type="text" class="btn btn-primary">GO</button>
+    </form>
+
+     <label><%= num_employees %></label> <!-- add ejs result -->
+
+    <div>
+        <br>
+    </div>
+
+    <form action="/StatEmployee_ExpWith" method="POST">
+        <label>Doctors have experience with</label>
+        <input type="text" size="20" name="specialty" id="specialty" placeholder="ex: ENT" >
+        <button type="text" class="btn btn-primary">GO</button>
+    </form>
+
+    <label><%= exp %></label> <!-- add ejs result -->
+
+    <div>
+        <br>
+    </div>
+
+    <form action="/StatEmployee_MostAppts" method="POST">
+        <label for="employee_ID">Doctor(s) with the most appointments</label>
+        <button type="text" class="btn btn-primary">GO</button>
+    </form>
+
+    <% if (doc_with_most_appointments != null) { %>
+        <label>Doctor(s) with most appointments: <%= doc_with_most_appointments %></label> <!-- add ejs result -->
+    <% } %>
+
+    <div>
+        <br>
+    </div>
+
+    <form action="/StatEmployee_MostAccesses" method="POST">
+        <label for="employee_ID">Doctor(s) with the most accesses</label>
+        <button type="text" class="btn btn-primary">GO</button>
+    </form>
+
+    <% if (doc_with_most_accesses != null) { %>
+        <label>Doctor(s) with most accesses: <%= doc_with_most_accesses %></label> <!-- add ejs result -->
+    <% } %>
+
+
+</div>
+
+
+<%- include('partials/footer') %>
