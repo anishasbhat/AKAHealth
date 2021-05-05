@@ -14,9 +14,9 @@ const app = express();
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "localhost",
+    host: "34.123.200.92",
     user: "root",
-    password: "stock123",
+    password: "password",
     database: "portal",
     multipleStatements: true
   });
@@ -42,7 +42,7 @@ app.post('/login', (req, res) => {
   const {username, password} = req.body;
   console.log(req.body);
 
-  var sql = "SELECT * FROM Login_info WHERE username = ?";
+  var sql = "SELECT * FROM Login_Info WHERE username = ?";
   var inserts = [username];
   sql = mysql.format(sql, inserts);
   sql = sql.replace(/`/g, "");
@@ -135,7 +135,7 @@ app.get('/patient/:id/edit', (req, res) => {
   }
   const { id } = req.params;
   // sql query to gather the information w that id
-  var sql = "SELECT * FROM Basic_Patient_Info WHERE Patient_ID = ?";
+  var sql = "SELECT * FROM Basic_Patient_Info WHERE patient_ID = ?";
   var inserts = [id];
   sql = mysql.format(sql, inserts);
   sql = sql.replace(/`/g, "");
@@ -170,7 +170,7 @@ app.patch('/patient/:id', (req, res) => {
     if (err2) throw err2;
   });
 
-  sql = "BEGIN; UPDATE `Basic_Patient_Info` SET `name` = ?, `age` = ?, `date_of_birth` = ?, `gender` = ?, `phone_number` = ?, `address` = ?, `current_medication` = ?, `underlying_health_condition` = ?, `insurance_ID` = ? WHERE `Patient_ID` = ?; COMMIT;";
+  sql = "BEGIN; UPDATE `Basic_Patient_Info` SET `name` = ?, `age` = ?, `date_of_birth` = ?, `gender` = ?, `phone_number` = ?, `address` = ?, `current_medication` = ?, `underlying_health_condition` = ?, `insurance_ID` = ? WHERE `patient_ID` = ?; COMMIT;";
   inserts = [patient_name, patient_age, patient_DOB, patient_gender, patient_phone_num, patient_address, patient_curr_medication, patient_health_condition, patient_insurance, id];
   sql = mysql.format(sql, inserts);
   sql = sql.replace(/`/g, "");
@@ -213,7 +213,7 @@ app.get('/patient/:id', (req, res) => {
 
   // sql query to gather the information w that id
 
-  sql = "SELECT * FROM Basic_Patient_Info WHERE `Patient_ID` = ?";
+  sql = "SELECT * FROM Basic_Patient_Info WHERE `patient_ID` = ?";
   inserts = [id];
   sql = mysql.format(sql, inserts);
   sql = sql.replace(/`/g, "");
@@ -243,7 +243,7 @@ app.delete('/patient/:id', (req, res) => {
     if (err2) throw err2;
   });
 
-  sql = "DELETE FROM Basic_Patient_Info WHERE `Patient_ID` = ?";
+  sql = "DELETE FROM Basic_Patient_Info WHERE `patient_ID` = ?";
   inserts = [id];
   sql = mysql.format(sql, inserts);
   sql = sql.replace(/`/g, "");
@@ -370,7 +370,7 @@ app.get('/AddToAppointmentTable/:id/add', (req, res) => {
   const { id } = req.params;
   console.log('AddToAppointmentTable')
 
-  var sql = "SELECT name FROM Basic_Patient_Info WHERE `Patient_ID` = ?";
+  var sql = "SELECT name FROM Basic_Patient_Info WHERE `patient_ID` = ?";
   var inserts = [id];
   sql = mysql.format(sql, inserts);
   sql = sql.replace(/`/g, "");
@@ -516,7 +516,7 @@ app.get('/StatPatient', (req, res) => {
     res.redirect("/")
     return;
   }
-  res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: null})
+  res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: null, get_num_meds: null})
 });
 
 
@@ -531,7 +531,7 @@ app.post('/StatPatient_ListByGender', (req, res) => {
 
   con.query(sql, function (err, result, fields) {
     if (err) throw err;
-    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: result[1][0].output, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: null})
+    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: result[1][0].output, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: null, get_num_meds: null})
   });
   
 });
@@ -548,7 +548,17 @@ app.post('/StatPatient_ListByAge', (req, res) => {
 
   con.query(sql, function (err, result, fields) {
     if (err) throw err;
-    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: result[1][0].output, patients_with_most_appts: null, most_common_illnesses: null})
+    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: result[1][0].output, patients_with_most_appts: null, most_common_illnesses: null, get_num_meds: null})
+  });
+});
+
+app.post('/StatPatient_getMeds', (req, res) => {
+  console.log('StatPatient_getMeds')
+
+  var sql = "CALL getNum_on_Medication(@out_total); SELECT @out_total as output;";
+  con.query(sql, function (err, result, fields) {
+    if (err) throw err;
+    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: null, get_num_meds: result[1][0].output})
   });
 });
 
@@ -558,7 +568,7 @@ app.post('/StatPatient_MostAppts', (req, res) => {
   var sql = "select Basic_Patient_Info.name, count(Appointments_Table.Patient_ID) as cnt from Appointments_Table join Basic_Patient_Info where Appointments_Table.Patient_ID = Basic_Patient_Info.Patient_ID group by Appointments_Table.Patient_ID having count(Appointments_Table.Patient_ID) >= (select max(a.cnt) from (select count(patient_ID) as cnt from Appointments_Table group by patient_ID) as a);";
   con.query(sql, function (err, result, fields) {
     if (err) throw err;
-    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: result[0], most_common_illnesses: null})
+    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: result[0], most_common_illnesses: null, get_num_meds: null})
   });
 });
 
@@ -568,7 +578,7 @@ app.post('/StatPatient_CommonIll', (req, res) => {
   var sql = "select symptoms, count(symptoms) as cnt from Appointments_Table group by symptoms having count(symptoms) >= (select max(a.cnt) from (select count(symptoms) as cnt from Appointments_Table group by symptoms) as a);";
   con.query(sql, function (err, result, fields) {
     if (err) throw err;
-    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: result[0]})
+    res.render('Stat_Patient', {title: "Stats Patient Page",  list_by_gender: null, list_by_age: null, patients_with_most_appts: null, most_common_illnesses: result[0], get_num_meds: null})
   });
 });
 
@@ -620,7 +630,7 @@ app.post('/StatEmployee_NumEmployees', (req, res) => {
 app.post('/StatEmployee_MostAppts', (req, res) => {
   console.log('StatPatient_MostAppts')
 
-  var sql = "SELECT e.name as name from Employee_info e, Appointments_Table a WHERE a.employee_ID = e.employee_ID GROUP BY e.employee_ID HAVING count(a.employee_ID) = (Select MAX(cnt) from (SELECT count(employee_ID) as cnt from Appointments_Table group by employee_ID) tb);";
+  var sql = "SELECT e.name as name from Employee_Info e, Appointments_Table a WHERE a.employee_ID = e.employee_ID GROUP BY e.employee_ID HAVING count(a.employee_ID) = (Select MAX(cnt) from (SELECT count(employee_ID) as cnt from Appointments_Table group by employee_ID) tb);";
   con.query(sql, function (err, result, fields) {
     if (err) throw err;
     console.log(result)
@@ -631,13 +641,12 @@ app.post('/StatEmployee_MostAppts', (req, res) => {
 app.post('/StatEmployee_MostAccesses', (req, res) => {
   console.log('StatEmployee_MostAccesses')
 
-  var sql = "SELECT e.name as name from Employee_info e, Employee_Accesses a WHERE a.employee_ID = e.employee_ID GROUP BY e.employee_ID HAVING count(a.employee_ID) = (Select MAX(cnt) from (SELECT count(employee_ID) as cnt from Employee_Accesses group by employee_ID) tb);";
+  var sql = "SELECT e.name as name from Employee_Info e, Employee_Accesses a WHERE a.employee_ID = e.employee_ID GROUP BY e.employee_ID HAVING count(a.employee_ID) = (Select MAX(cnt) from (SELECT count(employee_ID) as cnt from Employee_Accesses group by employee_ID) tb);";
   con.query(sql, function (err, result, fields) {
     if (err) throw err;
     console.log(result)
     res.render('Stat_Employee', {title: "Stats Employee Page", num_employees: null, exp: null, doc_with_most_appointments: null, doc_with_most_accesses: result[0].name})
   });
 });
-
 
 app.listen(3000);
